@@ -67,7 +67,7 @@ L_m = tread_w * post_every_n
 L_cm = L_m * 100
 P_point = 91.0   # kg (Concentrated load)
 w_dist = 75.0    # kg/m (Uniform load)
-Fb = 2450.0 * 0.66 # Allowable Stress
+Fb = 2400.0 * 0.66 # Allowable Stress
 
 # 3.1 Rail Stress (Strong Axis)
 M_rail = (P_point * L_cm) / 4
