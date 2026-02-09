@@ -11,9 +11,18 @@ st.set_page_config(page_title="Stair Structural Pro", layout="centered")
 materials = {
     "Flat 50x6": {"type": "flat", "b": 0.6, "h": 5.0},
     "Flat 50x9": {"type": "flat", "b": 0.9, "h": 5.0},
-    "Square Tube 1.5\" (2.3mm)": {"type": "box", "D": 3.8, "t": 0.23},
-    "Square Tube 2\" (3.2mm)": {"type": "box", "D": 5.0, "t": 0.32},
-    "Pipe 1.5\" (3.2mm)": {"type": "pipe", "OD": 4.27, "t": 0.32}
+    "Flat 50x12": {"type": "flat", "b": 1.2, "h": 5.0},
+    "Flat 50x16": {"type": "flat", "b": 1.6, "h": 5.0},
+    "Square Tube 32x2.3": {"type": "box", "D": 3.2, "t": 0.23},
+    "Square Tube 38x2.3": {"type": "box", "D": 3.8, "t": 0.23},
+    "Square Tube 50x2.3": {"type": "box", "D": 5.0, "t": 0.23},
+    "Square Tube 50x3.2": {"type": "box", "D": 5.0, "t": 0.32},
+    "Pipe 27.2x2.3": {"type": "pipe", "OD": 2.70, "t": 0.23},
+    "Pipe 34.0x2.3": {"type": "pipe", "OD": 3.40, "t": 0.23},
+    "Pipe 42.7x2.3": {"type": "pipe", "OD": 4.27, "t": 0.23},
+    "Pipe 42.7x3.2": {"type": "pipe", "OD": 4.27, "t": 0.32},
+    "Pipe 48.6x2.3": {"type": "pipe", "OD": 4.86, "t": 0.23},
+    "Pipe 48.6x3.2": {"type": "pipe", "OD": 4.86, "t": 0.32}
 }
 
 # ==========================================
@@ -57,7 +66,8 @@ L_cm = (tread_w * post_every_n) * 100
 H_cm = h_post_m * 100
 E = 2.04e6  # Modulus of Elasticity for Steel (kg/cm^2)
 Fb = 2450.0 * 0.66
-deflect_limit = H_cm / 120  # L/120 Limit
+# แก้จาก 120 เป็น 90
+deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้องการ
 
 # 4.1 Stiffness & Load Sharing
 k_post = (3 * E * I_post_s) / (H_cm**3)
@@ -90,7 +100,7 @@ st.title("Stair Structural Pro + Deflection Check")
 c1, c2, c3 = st.columns(3)
 c1.metric("Max Stress", f"{max_util:.1f}%")
 c2.metric("Max Deflection", f"{max(delta_s, delta_w):.2f} cm")
-c3.metric("Limit (L/120)", f"{deflect_limit:.2f} cm")
+c3.metric("Limit (L/90)", f"{deflect_limit:.2f} cm")
 
 if max_util > 100 or not deflect_pass:
     st.error("⚠️ โครงสร้างไม่ผ่านเกณฑ์ (Check Stress หรือ Deflection)")
