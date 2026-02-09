@@ -71,7 +71,7 @@ deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้�
 
 # 4.1 Stiffness & Load Sharing
 k_post = (3 * E * I_post_s) / (H_cm**3)
-k_rail = (48 * E * I_rail) / (L_cm**3)
+k_rail = (48 * E * I_rail) / ((2*L_cm)**3)
 df = k_post / (k_post + k_rail)
 
 # 4.2 Post Deflection Calculation (Cantilever Case)
