@@ -135,7 +135,7 @@ with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
     st.write(f"- Post (Strong): {ratio_post_s:.1f}%")
     st.write(f"- Post (Weak): {ratio_post_w:.1f}%")
     
-    st.subheader("Deflection Analysis (L/120)")
+    st.subheader("Deflection Analysis (L/90)")
     st.write(f"- Limit: {deflect_limit:.2f} cm")
     st.write(f"- Actual Strong Axis: {delta_s:.2f} cm {'✅' if delta_s <= deflect_limit else '❌'}")
     st.write(f"- Actual Weak Axis: {delta_w:.2f} cm {'✅' if delta_w <= deflect_limit else '❌'}")
