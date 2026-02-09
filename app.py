@@ -39,7 +39,7 @@ with st.sidebar:
     st.subheader("Materials")
     rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=0)
     post_sel = st.selectbox("Select Post", list(materials.keys()), index=2)
-    is_end_post = st.checkbox("End Post (เสาริม)", value=False)
+
 
 # ==========================================
 # 4. CALCULATIONS (Stress & Deflection)
@@ -72,7 +72,7 @@ deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้�
 # 4.1 Stiffness & Load Sharing
 k_post = (3 * E * I_post_s) / (H_cm**3)
 k_rail = (48 * E * I_rail) / (L_cm**3)
-df = max(min(k_post / (k_post + ((1 if is_end_post else 2) * k_rail)), 1.0), 0.6)
+df = max(min(k_post / (k_post + ((2) * k_rail)), 1.0), 0.6)
 
 # 4.2 Post Deflection Calculation (Cantilever Case)
 P_eff = 91.0 * df
