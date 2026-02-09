@@ -142,4 +142,6 @@ with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
     
     st.divider()
     st.write(f"**Distribution Factor (DF):** {df:.2f}")
+    st.write(f"**Kpost:** {k_post:.2f}")
+    st.write(f"**Krail:** {k_rail:.2f}")
     st.info(f"Post Spacing: {L_cm:.1f} cm")
