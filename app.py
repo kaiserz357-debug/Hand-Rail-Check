@@ -34,7 +34,7 @@ with st.sidebar:
     tread_w = st.number_input("Tread Width (m)", value=0.25, step=0.01)
     total_stairs = st.slider("Total Steps", 1, 20, 9)
     h_post_m = st.number_input("Post Height (m)", value=0.90, step=0.05)
-    post_every_n = st.selectbox("Post Spacing (steps)", [1/5,1/4,1/3,1/2,1, 2, 3, 4], index=1)
+    post_every_n = st.selectbox("Post Spacing (steps)", [1, 2, 3, 4], index=1)
     
     st.subheader("Materials")
     rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=0)
