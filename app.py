@@ -6,7 +6,7 @@ import math
 st.set_page_config(page_title="Stair Structural Pro", layout="centered")
 
 st.title("Stair Railing: Stiffness Analysis")
-st.write("คำนวณการกระจายแรง (Load Distribution) ตามความแข็งแรงของวัสดุ")
+st.info("💡 ปรับเปลี่ยนวัสดุที่ Sidebar เพื่อดูการกระจายแรงแบบ Real-time")
 
 # ==========================================
 # 1. MATERIAL DATABASE
@@ -40,22 +40,21 @@ def get_properties(name):
 # ==========================================
 with st.sidebar:
     st.header("⚙️ Configuration")
-    riser_h = st.number_input("Riser Height (m)", value=0.18)
-    tread_w = st.number_input("Tread Width (m)", value=0.25)
-    total_stairs = st.slider("Steps", 1, 20, 9)
-    h_post_m = st.number_input("Post Height (m)", value=0.90)
+    riser_h = st.number_input("Riser Height (m)", value=0.18, step=0.01)
+    tread_w = st.number_input("Tread Width (m)", value=0.25, step=0.01)
+    total_stairs = st.slider("Total Steps", 1, 20, 9)
+    h_post_m = st.number_input("Post Height (m)", value=0.90, step=0.05)
     post_every_n = st.selectbox("Post Spacing (steps)", [1, 2, 3, 4], index=1)
     
-    st.subheader("Materials")
-    rail_sel = st.selectbox("Rail Material", list(materials.keys()), index=0)
-    post_sel = st.selectbox("Post Material", list(materials.keys()), index=2)
+    st.subheader("Materials Selection")
+    rail_sel = st.selectbox("Select Railing Material", list(materials.keys()), index=0)
+    post_sel = st.selectbox("Select Post Material", list(materials.keys()), index=2)
     
-    is_end_post = st.checkbox("เป็นเสาต้นแรก/สุดท้าย (End Post)", value=False)
+    is_end_post = st.checkbox("เช็คที่เสาต้นริม (End Post)", value=False)
 
 # ==========================================
-# 3. ADVANCED CALCULATIONS
+# 3. CALCULATIONS
 # ==========================================
-# 3.1 Get Structural Properties
 S_rail_s, _, I_rail, h_rail = get_properties(rail_sel)
 S_post_s, S_post_w, I_post, h_post = get_properties(post_sel)
 
@@ -64,58 +63,60 @@ H_cm = h_post_m * 100
 P_point, w_dist = 91.0, 75.0
 Fb = 2450.0 * 0.66
 
-# 3.2 Stiffness & Distribution Logic
-# k = Load / Deflection
+# Stiffness-Based Distribution Factor (DF)
 k_post = (3 * I_post) / (H_cm**3)
 k_rail = (48 * I_rail) / (L_cm**3)
-
-# Distribution Factor (DF)
-# กรณีเสากลาง แรงจะกระจายไป 2 ข้าง (2*k_rail)
-# กรณีเสาริม แรงกระจายได้ข้างเดียว (1*k_rail)
 neighbor_count = 1 if is_end_post else 2
 df = k_post / (k_post + (neighbor_count * k_rail))
-df = max(min(df, 1.0), 0.6) # Limit ต่ำสุดที่ 0.6 ตามมาตรฐานความปลอดภัย
+df = max(min(df, 1.0), 0.6) # มาตรฐานความปลอดภัยไม่ควรต่ำกว่า 0.6
 
-# 3.3 Final Stress Calculations
+# Final Stress
 P_eff = P_point * df
-M_rail = (P_point * L_cm) / 4
-M_post_s = P_eff * H_cm
-M_post_w = (w_dist * (L_cm/100) * H_cm) # Weak axis จาก Uniform load
-
-ratio_rail = (M_rail / S_rail_s / Fb) * 100
-ratio_post_s = (M_post_s / S_post_s / Fb) * 100
-ratio_post_w = (M_post_w / S_post_w / Fb) * 100
+ratio_rail = ((P_point * L_cm / 4) / S_rail_s / Fb) * 100
+ratio_post_s = (P_eff * H_cm / S_post_s / Fb) * 100
+ratio_post_w = (w_dist * (L_cm/100) * H_cm / S_post_w / Fb) * 100
 
 max_util = max(ratio_rail, ratio_post_s, ratio_post_w)
 
 # ==========================================
-# 4. MOBILE-FIRST UI
+# 4. VISUALIZATION
 # ==========================================
 col1, col2 = st.columns(2)
-col1.metric("Max Utilization", f"{max_util:.1f}%", delta=f"{df*100:.0f}% Load Share", delta_color="normal")
-col2.metric("Post Status", "SAFE" if max_util < 100 else "FAIL")
+col1.metric("Max Utilization", f"{max_util:.1f}%", delta=f"{df*100:.0f}% Load Share", delta_color="inverse")
+col2.metric("Overall Status", "SAFE" if max_util < 100 else "FAIL")
 
-# Drawing
-fig, ax = plt.subplots(figsize=(10, 5))
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# 4.1 วาดบันได (Tread & Riser)
 for i in range(total_stairs):
-    ax.plot([i*tread_w, (i+1)*tread_w], [i*riser_h, i*riser_h], color='black', lw=1)
-    ax.plot([(i+1)*tread_w, (i+1)*tread_w], [i*riser_h, (i+1)*riser_h], color='black', lw=1)
+    ax.plot([i*tread_w, (i+1)*tread_w], [i*riser_h, i*riser_h], color='black', lw=1.2) # Tread
+    ax.plot([(i+1)*tread_w, (i+1)*tread_w], [i*riser_h, (i+1)*riser_h], color='black', lw=1.2) # Riser
 
+# 4.2 วาดเสาและเก็บตำแหน่งยอดเสาเพื่อวาดราว
 post_idx = list(range(0, total_stairs, post_every_n))
 if (total_stairs-1) not in post_idx: post_idx.append(total_stairs-1)
 
+x_tops, y_tops = [], []
 for s in post_idx:
-    px, py = (s * tread_w) + (tread_w / 2), s * riser_h
-    ax.plot([px, px], [py, py + h_post_m], color='seagreen' if max_util < 100 else 'crimson', lw=4)
+    px = (s * tread_w) + (tread_w / 2)
+    py = s * riser_h
+    # วาดเสา
+    ax.plot([px, px], [py, py + h_post_m], color='seagreen' if max_util < 100 else 'crimson', lw=4, zorder=3)
+    # เก็บค่าไว้ลากเส้นราว
+    x_tops.append(px)
+    y_tops.append(py + h_post_m)
+
+# 4.3 วาดราว (Rail) เชื่อมต่อยอดเสา
+ax.plot(x_tops, y_tops, color='royalblue', lw=5, marker='o', markersize=8, label='Handrail', zorder=4)
 
 ax.set_aspect('equal')
+ax.grid(True, alpha=0.1)
 st.pyplot(fig)
 
-with st.expander("📊 Detailed Analysis"):
-    st.write(f"**Distribution Factor:** {df:.2f} (เสารับแรงจริง {P_eff:.1f} kg)")
-    st.write(f"**Rail Stiffness (k_rail):** {k_rail:.4f}")
-    st.write(f"**Post Stiffness (k_post):** {k_post:.4f}")
+with st.expander("📊 Detailed Structural Analysis"):
+    st.write(f"**Load Share (DF):** {df:.2f} (เสารับแรงจริง {P_eff:.1f} kg)")
     st.divider()
-    st.write(f"Ratio Rail: {ratio_rail:.1f}%")
-    st.write(f"Ratio Post (Strong): {ratio_post_s:.1f}%")
-    st.write(f"Ratio Post (Weak): {ratio_post_w:.1f}%")
+    st.write(f"- Rail Stress Ratio: {ratio_rail:.1f}%")
+    st.write(f"- Post Strong Axis (Push): {ratio_post_s:.1f}%")
+    st.write(f"- Post Weak Axis (Uniform): {ratio_post_w:.1f}%")
+    st.info(f"Post Spacing: {L_cm:.1f} cm")
