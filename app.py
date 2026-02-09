@@ -14,11 +14,19 @@ st.info("💡 แตะปุ่มลูกศรมุมซ้ายบน �
 materials = {
     "Flat 50x6": {"type": "flat", "b": 0.6, "h": 5.0},
     "Flat 50x9": {"type": "flat", "b": 0.9, "h": 5.0},
-    "Square Tube 1.5\" (2.3mm)": {"type": "box", "D": 3.8, "t": 0.23},
-    "Square Tube 2\" (3.2mm)": {"type": "box", "D": 5.0, "t": 0.32},
-    "Pipe 1.5\" (3.2mm)": {"type": "pipe", "OD": 4.27, "t": 0.32}
+    "Flat 50x12": {"type": "flat", "b": 1.2, "h": 5.0},
+    "Flat 50x16": {"type": "flat", "b": 1.6, "h": 5.0},
+    "Square Tube 32x2.3": {"type": "box", "D": 3.2, "t": 0.23},
+    "Square Tube 38x2.3": {"type": "box", "D": 3.8, "t": 0.23},
+    "Square Tube 50x2.3": {"type": "box", "D": 5.0, "t": 0.23},
+    "Square Tube 50x3.2": {"type": "box", "D": 5.0, "t": 0.32},
+    "Pipe 27.2x2.3": {"type": "pipe", "OD": 2.70, "t": 0.23},
+    "Pipe 34.0x2.3": {"type": "pipe", "OD": 3.40, "t": 0.23},
+    "Pipe 42.7x2.3": {"type": "pipe", "OD": 4.27, "t": 0.23},
+    "Pipe 42.7x3.2": {"type": "pipe", "OD": 4.27, "t": 0.32},
+    "Pipe 48.6x2.3": {"type": "pipe", "OD": 4.86, "t": 0.23},
+    "Pipe 48.6x3.2": {"type": "pipe", "OD": 4.86, "t": 0.32}
 }
-
 def get_S_values(name):
     m = materials[name]
     if m["type"] == "flat":
