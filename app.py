@@ -15,7 +15,7 @@ materials = {
     "Flat 50x16": {"type": "flat", "b": 1.6, "h": 5.0},
     "Square Tube 32x2.3": {"type": "box", "D": 3.2, "t": 0.23},
     "Square Tube 38x2.3": {"type": "box", "D": 3.8, "t": 0.23},
-    "Square Tube 50x2.3": {"type": "box", "D": 5.0, "t": 0.23},
+    "Square Tube 50x2.3": {"type": "box", "D": 5.0, "t": 0.23}
     "Square Tube 50x3.2": {"type": "box", "D": 5.0, "t": 0.32},
     "Pipe 27.2x2.3": {"type": "pipe", "OD": 2.70, "t": 0.23},
     "Pipe 34.0x2.3": {"type": "pipe", "OD": 3.40, "t": 0.23},
