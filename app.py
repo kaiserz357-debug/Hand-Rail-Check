@@ -34,8 +34,26 @@ with st.sidebar:
     tread_w = st.number_input("Tread Width (m)", value=0.25, step=0.01)
     total_stairs = st.slider("Total Steps", 1, 20, 9)
     h_post_m = st.number_input("Post Height (m)", value=0.90, step=0.05)
-    post_every_n = st.selectbox("Post Spacing (steps)", [0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4], index=1)
-    
+
+import streamlit as st
+
+# 1. นิยาม Dictionary (ชื่อตัวแปรโอเคแล้วครับ)
+post_pitch = {
+    "@50 MM.": 0.05/tread_w,
+    "@100 MM.": 0.10/tread_w,
+    "Every 1 Step": 1,
+    "Every 2 Steps": 2,
+    "Every 3 Steps": 3,
+    "Every 4 Steps": 4
+}
+
+# 2. รับค่าจาก Selectbox (ชื่อตัวแปร post_pitch2 ใช้ได้ครับ)
+post_pitch2 = st.selectbox("Post Spacing", list(post_pitch.keys()), index=2)
+
+# 3. ดึงค่า Value (แก้จาก post_pitch2l เป็น post_pitch2)
+post_every_n = post_pitch[post_pitch2]
+
+   
     st.subheader("Materials")
     rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=0)
     post_sel = st.selectbox("Select Post", list(materials.keys()), index=2)
