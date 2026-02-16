@@ -34,7 +34,7 @@ with st.sidebar:
     tread_w = st.number_input("Tread Width (m)", value=0.25, step=0.01)
     total_stairs = st.slider("Total Steps", 1, 20, 9)
     h_post_m = st.number_input("Post Height (m)", value=0.90, step=0.05)
-    post_every_n = st.selectbox("Post Spacing (steps)", [1, 2, 3, 4], index=1)
+    post_every_n = st.selectbox("Post Spacing (steps)", [0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4], index=1)
     
     st.subheader("Materials")
     rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=0)
@@ -113,7 +113,12 @@ for i in range(total_stairs):
     ax.plot([i*tread_w, (i+1)*tread_w], [i*riser_h, i*riser_h], color='black', lw=1)
     ax.plot([(i+1)*tread_w, (i+1)*tread_w], [i*riser_h, (i+1)*riser_h], color='black', lw=1)
 
-post_idx = list(range(0, total_stairs, post_every_n))
+if post_every_n < 1:
+    Step_post = 1
+else:
+    Step_post = post_every_n  # ถ้าค่าปกติ ก็ใช้ค่านั้นเลย
+    
+post_idx = list(range(0, total_stairs, Step_post))
 if (total_stairs-1) not in post_idx: post_idx.append(total_stairs-1)
 
 x_tops, y_tops = [], []
