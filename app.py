@@ -5,9 +5,7 @@ import math
 # 1. Setup
 st.set_page_config(page_title="Stair Structural Pro", layout="centered")
 
-# ==========================================
-# 2. MATERIAL DATABASE
-# ==========================================
+# 2. MATERIAL DATABASE (เพิ่มคอมม่าที่บรรทัด Square Tube 50x2.3)
 materials = {
     "Flat 50x6": {"type": "flat", "b": 0.6, "h": 5.0},
     "Flat 50x9": {"type": "flat", "b": 0.9, "h": 5.0},
@@ -15,7 +13,7 @@ materials = {
     "Flat 50x16": {"type": "flat", "b": 1.6, "h": 5.0},
     "Square Tube 32x2.3": {"type": "box", "D": 3.2, "t": 0.23},
     "Square Tube 38x2.3": {"type": "box", "D": 3.8, "t": 0.23},
-    "Square Tube 50x2.3": {"type": "box", "D": 5.0, "t": 0.23},
+    "Square Tube 50x2.3": {"type": "box", "D": 5.0, "t": 0.23}, # เติมคอมม่าตรงนี้
     "Square Tube 50x3.2": {"type": "box", "D": 5.0, "t": 0.32},
     "Pipe 27.2x2.3": {"type": "pipe", "OD": 2.70, "t": 0.23},
     "Pipe 34.0x2.3": {"type": "pipe", "OD": 3.40, "t": 0.23},
@@ -25,9 +23,7 @@ materials = {
     "Pipe 48.6x3.2": {"type": "pipe", "OD": 4.86, "t": 0.32}
 }
 
-# ==========================================
-# 3. SIDEBAR INPUTS
-# ==========================================
+# 3. SIDEBAR INPUTS (ย้ายส่วนคำนวณมาไว้หลังรับค่า Input)
 with st.sidebar:
     st.header("⚙️ Configuration")
     riser_h = st.number_input("Riser Height (m)", value=0.18, step=0.01)
@@ -35,28 +31,23 @@ with st.sidebar:
     total_stairs = st.slider("Total Steps", 1, 20, 9)
     h_post_m = st.number_input("Post Height (m)", value=0.90, step=0.05)
 
-import streamlit as st
+    # ย้าย Post Spacing มาไว้ใน Sidebar หรือหลัง Tread Width
+    post_pitch = {
+        "@50 MM.": 0.05/tread_w,
+        "@100 MM.": 0.10/tread_w,
+        "Every 1 Step": 1,
+        "Every 2 Steps": 2,
+        "Every 3 Steps": 3,
+        "Every 4 Steps": 4
+    }
+    post_pitch_label = st.selectbox("Post Spacing", list(post_pitch.keys()), index=2)
+    post_every_n = post_pitch[post_pitch_label] # แก้ชื่อตัวแปรให้ตรงกัน
 
-# 1. นิยาม Dictionary (ชื่อตัวแปรโอเคแล้วครับ)
-post_pitch = {
-    "@50 MM.": 0.05/tread_w,
-    "@100 MM.": 0.10/tread_w,
-    "Every 1 Step": 1,
-    "Every 2 Steps": 2,
-    "Every 3 Steps": 3,
-    "Every 4 Steps": 4
-}
-
-# 2. รับค่าจาก Selectbox (ชื่อตัวแปร post_pitch2 ใช้ได้ครับ)
-post_pitch2 = st.selectbox("Post Spacing", list(post_pitch.keys()), index=2)
-
-# 3. ดึงค่า Value (แก้จาก post_pitch2l เป็น post_pitch2)
-post_every_n = post_pitch[post_pitch2]
-
-   
     st.subheader("Materials")
     rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=0)
     post_sel = st.selectbox("Select Post", list(materials.keys()), index=2)
+
+# --- ส่วนที่เหลือ (Calculations & Plot) ใช้ตามเดิมได้เลยครับ ---
 
 
 # ==========================================
