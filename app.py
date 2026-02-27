@@ -104,7 +104,7 @@ deflect_pass = (delta_s <= deflect_limit) and (delta_w <= deflect_limit)
 # ==========================================
 # 5. MAIN UI
 # ==========================================
-st.title("Stair Structural Pro + Deflection Check")
+st.title("Hand Rail Check by Ardharn 2026")
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Max Stress", f"{max_util:.1f}%")
