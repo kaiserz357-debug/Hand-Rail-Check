@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import math
 
 # 1. Setup
-st.set_page_config(page_title="Stair Structural Pro", layout="centered")
+st.set_page_config(page_title="Hand Rail Check by Ardharn 2026", layout="centered")
 
 # 2. MATERIAL DATABASE (เพิ่มคอมม่าที่บรรทัด Square Tube 50x2.3)
 materials = {
