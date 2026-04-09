@@ -150,9 +150,16 @@ for s in post_idx:
     y_tops.append(py + h_post_m)
 
 # 6.4 ปรับแต่งภาพและแสดงผล
-ax.plot(x_tops, y_tops, color='royalblue', lw=5, marker='o', zorder=4)
+# ลากเส้นเชื่อมเฉพาะจุดแรก (Index 0) และจุดสุดท้าย (Index -1)
+if len(x_tops) >= 2:
+    ax.plot([x_tops[0], x_tops[-1]], [y_tops[0], y_tops[-1]], 
+            color='royalblue', lw=5, zorder=4, label='Top Rail')
+
+# วาดจุด Marker (หัวเสา) ไว้เหมือนเดิมเพื่อให้เห็นตำแหน่งยึด
+ax.scatter(x_tops, y_tops, color='royalblue', s=50, zorder=5) 
+
 ax.set_aspect('equal')
-ax.set_title("Handrail Side View Analysis")
+ax.set_title("Handrail Side View Analysis (First to Last Post)")
 ax.set_xlabel("Distance (m)")
 ax.set_ylabel("Height (m)")
 
