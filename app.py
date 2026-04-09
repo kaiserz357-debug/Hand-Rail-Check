@@ -120,8 +120,10 @@ else:
     st.success("✅ Hand Rail Pass all Stress and Deflection")
 
 # ==========================================
-# 6. DRAWING
+# 6. DRAWING (Integrated Version)
 # ==========================================
+import numpy as np
+
 fig, ax = plt.subplots(figsize=(10, 5))
 
 # 6.1 วาดโครงขั้นบันได
@@ -129,60 +131,63 @@ for i in range(total_stairs):
     ax.plot([i*tread_w, (i+1)*tread_w], [i*riser_h, i*riser_h], color='black', lw=1)
     ax.plot([(i+1)*tread_w, (i+1)*tread_w], [i*riser_h, (i+1)*riser_h], color='black', lw=1)
 
-# ==========================================
 # 6.2 คำนวณตำแหน่งเสา (รองรับการปักหลายต้นใน 1 ขั้น)
-# ==========================================
-# สร้างลิสต์เก็บตำแหน่ง 'หน่วยเป็นขั้น' (ทศนิยมได้)
 post_locations = []
-current_pos = 0.5  # เริ่มต้นที่กึ่งกลางลูกนอนของขั้นแรก (0.5)
-
-# วนลูปหาตำแหน่งเสาไปเรื่อยๆ จนกว่าจะสุดจำนวนขั้น
-# เราใช้ความกว้างลูกนอนเป็น 1 หน่วย (1 Step unit)
+current_pos = 0.5  # เริ่มต้นที่กึ่งกลางลูกนอนของขั้นแรก
 total_length_in_steps = float(total_stairs)
 
 while current_pos < total_length_in_steps:
     post_locations.append(current_pos)
-    current_pos += post_every_n  # บวกระยะห่างเสา (หน่วยเป็นขั้น) เข้าไป
+    current_pos += post_every_n
 
-# บังคับให้มีเสาต้นสุดท้ายที่กึ่งกลางลูกนอนของขั้นสุดท้าย (ถ้ายังไม่มี)
+# บังคับให้มีเสาต้นสุดท้ายที่กึ่งกลางลูกนอนของขั้นสุดท้าย
 last_step_center = total_stairs - 0.5
 if len(post_locations) > 0 and post_locations[-1] < last_step_center:
     post_locations.append(last_step_center)
 
-# ==========================================
-# 6.3 วาดเสาและราวจับ
-# ==========================================
+# 6.3 วาดเสาและเขียนชื่อวัสดุทับกึ่งกลางเสา
 x_tops, y_tops = [], []
 for s in post_locations:
-    # s คือตำแหน่งในหน่วย 'ขั้น' (เช่น 0.5, 0.9, 1.3...)
-    # คำนวณพิกัด X: s * ความกว้างลูกนอน
-    # คำนวณพิกัด Y: (ตำแหน่ง s ปัดเศษลงเพื่อหาว่าอยู่ขั้นไหน) * ความสูงขั้น
+    # คำนวณพิกัด (s คือหน่วยขั้นบันได)
     px = s * tread_w
     py = math.floor(s) * riser_h 
     
-    # สีเสาเปลี่ยนตามเงื่อนไข Stress & Deflection
+    # สีเสาตามผลการเช็ค
     color = 'green' if (max_util < 100 and deflect_pass) else 'red'
     
     # วาดเสา
     ax.plot([px, px], [py, py + h_post_m], color=color, lw=4, zorder=3)
     
-    # เก็บค่าหัวเสาไว้ลากราวจับ
+    # เขียนชื่อ Material Post แบบเอียง 90 องศา ทับกึ่งกลางเสา
+    label_post_y = py + (h_post_m / 2)
+    ax.text(px, label_post_y, f"{post_sel}", 
+            color='black', fontsize=7, fontweight='bold',
+            rotation=90, ha='center', va='center',
+            bbox=dict(facecolor='white', alpha=0.4, edgecolor='none'))
+
     x_tops.append(px)
     y_tops.append(py + h_post_m)
 
-# ==========================================
-# 6.4 ปรับแต่งภาพและแสดงผล
-# ==========================================
-
-# 1. ลากเส้นราวจับเชื่อมเฉพาะจุดแรกและจุดสุดท้าย (ไม่มี Marker วงกลมแล้ว)
+# 6.4 วาดราวจับและเขียนชื่อวัสดุเหนือราว
 if len(x_tops) >= 2:
+    # วาดราวจับเส้นตรงจากต้นแรกไปต้นสุดท้าย
     ax.plot([x_tops[0], x_tops[-1]], [y_tops[0], y_tops[-1]], 
-            color='royalblue', lw=5, zorder=4, label='Top Rail')
-
-# --- บรรทัด ax.scatter เดิมถูกเอาออกแล้วเพื่อให้ภาพดู Clean ขึ้น ---
+            color='royalblue', lw=5, zorder=4)
+    
+    # คำนวณมุมเอียงของราวจับเพื่อหมุนตัวอักษรให้ขนาน
+    dx = x_tops[-1] - x_tops[0]
+    dy = y_tops[-1] - y_tops[0]
+    angle_deg = np.degrees(np.arctan2(dy, dx))
+    
+    # เขียนชื่อ Material Rail เอียงขนานเหนือราวจับ (ตำแหน่งกึ่งกลางเส้น)
+    mid_x = (x_tops[0] + x_tops[-1]) / 2
+    mid_y = (y_tops[0] + y_tops[-1]) / 2
+    ax.text(mid_x, mid_y + 0.05, f"Rail: {rail_sel}", 
+            color='royalblue', fontsize=9, fontweight='bold',
+            rotation=angle_deg, ha='center', va='bottom')
 
 ax.set_aspect('equal')
-ax.set_title("Handrail Side View Analysis (Clean View)")
+ax.set_title("Handrail Structural Analysis View")
 ax.set_xlabel("Distance (m)")
 ax.set_ylabel("Height (m)")
 
