@@ -1,11 +1,13 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import math
-
+# ==========================================
 # 1. Setup
+# ==========================================
 st.set_page_config(page_title="Hand Rail Check by Ardharn ver01 2026", layout="centered")
-
+# ==========================================
 # 2. MATERIAL DATABASE (เพิ่มคอมม่าที่บรรทัด Square Tube 50x2.3)
+# ==========================================
 materials = {
     "Flat 50x6": {"type": "flat", "b": 0.6, "h": 5.0},
     "Flat 50x9": {"type": "flat", "b": 0.9, "h": 5.0},
@@ -22,8 +24,9 @@ materials = {
     "Pipe 48.6x2.3": {"type": "pipe", "OD": 4.86, "t": 0.23},
     "Pipe 48.6x3.2": {"type": "pipe", "OD": 4.86, "t": 0.32}
 }
-
+# ==========================================
 # 3. SIDEBAR INPUTS (ย้ายส่วนคำนวณมาไว้หลังรับค่า Input)
+# ==========================================
 with st.sidebar:
     st.header("⚙️ Configuration")
     riser_h = st.number_input("Riser Height (m)", value=0.18, step=0.01)
