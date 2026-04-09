@@ -109,10 +109,16 @@ Fb = 2450.0 * 0.66
 # แก้จาก 120 เป็น 90
 deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้องการ
 
-# 4.1 Stiffness & Load Sharing
-k_post = (3 * E * I_post_s) / (H_cm**3)
-k_rail = (6 * E * I_rail) / (L_cm**3)
-df = k_post/(k_post + (k_rail*2*k_post)/ (2*k_post + k_rail))
+# 1. เช็ค Shortcut สำหรับเคส @50 MM.
+if post_pitch == "@50 MM.":
+    df = 0.2
+else:
+    # 2. คำนวณตามทฤษฎีปกติสำหรับเคสอื่นๆ
+    k_post = (3 * E * I_post_s) / (H_cm**3)
+    k_rail = (6 * E * I_rail) / (L_cm**3)
+    # สูตรเดิมที่คุณเขียนไว้
+    df = k_post / (k_post + (k_rail * 2 * k_post) / (2 * k_post + k_rail))
+
 
 # 4.2 Post Deflection Calculation (Cantilever Case)
 P_eff = 91.0 * df
