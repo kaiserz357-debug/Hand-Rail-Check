@@ -48,7 +48,7 @@ with st.sidebar:
 
     st.subheader("Materials")
     rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=11)
-    post_sel = st.selectbox("Select Post", list(materials.keys()), index=9)
+    post_sel = st.selectbox("Select Post", list(materials.keys()), index=11)
 
 # --- ส่วนที่เหลือ (Calculations & Plot) ใช้ตามเดิมได้เลยครับ ---
 
