@@ -82,58 +82,53 @@ Fb = 2450.0 * 0.66
 deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้องการ
 
 # ==========================================
-# 4.1 Stiffness & Load Sharing (Improved Group Logic)
+# 4. CALCULATIONS (Stress & Deflection)
 # ==========================================
-# กำหนดค่าแรงมาตรฐาน (กรณีไม่มีตัวแปร P จาก Sidebar)
-P_standard = 91.0 
+def get_props(name):
+    m = materials[name]
+    if m["type"] == "flat":
+        s_s = (m["b"] * (m["h"]**2)) / 6
+        s_w = (m["h"] * (m["b"]**2)) / 6
+        i_s = (m["b"] * (m["h"]**3)) / 12
+        i_w = (m["h"] * (m["b"]**3)) / 12
+        return s_s, s_w, i_s, i_w
+    elif m["type"] == "box":
+        i = (m["D"]**4 - (m["D"] - 2*m["t"])**4) / 12
+        return i/(m["D"]/2), i/(m["D"]/2), i, i
+    elif m["type"] == "pipe":
+        i = (math.pi * (m["OD"]**4 - (m["OD"] - 2*m["t"])**4)) / 64
+        return i/(m["OD"]/2), i/(m["OD"]/2), i, i
 
-# 1. จำนวนเสาต่อ 1 ลูกนอน
-if post_every_n < 1:
-    posts_per_tread = 1 / post_every_n
-else:
-    posts_per_tread = 1.0
+S_rail_s, _, I_rail, _ = get_props(rail_sel)
+S_post_s, S_post_w, I_post_s, I_post_w = get_props(post_sel)
 
-# 2. Stiffness (k)
-k_single_post = (3 * E * I_post_s) / (H_cm**3)
-k_post_eff = k_single_post * posts_per_tread 
+L_cm = (tread_w * post_every_n) * 100
+H_cm = h_post_m * 100
+E = 2.04e6  # Modulus of Elasticity for Steel (kg/cm^2)
+Fb = 2450.0 * 0.66
+# แก้จาก 120 เป็น 90
+deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้องการ
+
+# 4.1 Stiffness & Load Sharing
+k_post = (3 * E * I_post_s) / (H_cm**3)
 k_rail = (6 * E * I_rail) / (L_cm**3)
+df = k_post/(k_post + (k_rail*2*k_post)/ (2*k_post + k_rail))
 
-# 3. Distribution Factor (df)
-df = k_post_eff / (k_post_eff + (k_rail * 2 * k_post_eff) / (2 * k_post_eff + k_rail))
-
-# 4. Effective Load per Single Post (แรงที่ลงเสา 1 ต้นหลังแบ่งกลุ่มและแชร์แรงแล้ว)
-# ใช้ค่านี้ในการเช็คทั้ง Deflection และ Stress ของเสา
-P_eff_post = (P_standard / posts_per_tread) * df
-
-# ==========================================
-# 4.2 Deflection Calculation
-# ==========================================
-# Strong Axis Deflection (จากแรงผลัก 91 kg)
-delta_s = (P_eff_post * (H_cm**3)) / (3 * E * I_post_s)
+# 4.2 Post Deflection Calculation (Cantilever Case)
+P_eff = 91.0 * df
+# delta = (P * L^3) / (3 * E * I)
+delta_s = (P_eff * (H_cm**3)) / (3 * E * I_post_s)
 
 # Weak Axis Deflection (จาก Uniform Load 75 kg/m)
-# หมายเหตุ: แรงลม/แรงแผ่ มักจะไม่แชร์ด้วย df แบบ Point Load 
-# แต่จะถูกหารแบ่งตามจำนวนเสาใน 1 ขั้น
 W_line = 75.0 / 100 # kg/cm
-R_top_weak = (W_line * L_cm) / posts_per_tread
-delta_w = (R_top_weak * (H_cm**3)) / (3 * E * I_post_w)
+R_top = W_line * L_cm
+delta_w = (R_top * (H_cm**3)) / (3 * E * I_post_w)
 
-# ==========================================
-# 4.3 Stress Check
-# ==========================================
-# 1. Rail Stress: (ใช้แรง 91 kg * df_rail) 
-# df_rail คือแรงส่วนที่วิ่งเข้า Rail = (1 - df) 
-# แต่เพื่อความปลอดภัย (Conservative) ตามมาตรฐาน มักใช้แรงเต็มหรือแชร์แค่บางส่วน
-# ในที่นี้ใช้แรง 91 kg กระจายแบบ Simple Span L_cm
-ratio_rail = ((P_standard * L_cm / 4) / S_rail_s / Fb) * 100
+# 4.3 Stress Check (เดิม)
+ratio_rail = ((91.0 * L_cm / 4) / S_rail_s / Fb) * 100
+ratio_post_s = (P_eff * H_cm / S_post_s / Fb) * 100
+ratio_post_w = (R_top * H_cm / S_post_w / Fb) * 100
 
-# 2. Post Stress (Strong Axis): ใช้ P_eff_post ที่คำนวณได้
-ratio_post_s = (P_eff_post * H_cm / S_post_s / Fb) * 100
-
-# 3. Post Stress (Weak Axis): ใช้ R_top_weak
-ratio_post_w = (R_top_weak * H_cm / S_post_w / Fb) * 100
-
-# Summary
 max_util = max(ratio_rail, ratio_post_s, ratio_post_w)
 deflect_pass = (delta_s <= deflect_limit) and (delta_w <= deflect_limit)
 
