@@ -155,20 +155,40 @@ ax.set_ylabel("Height (m)")
 
 st.pyplot(fig)
 
-# Detailed Analysis
+# ==========================================
+# 7. DETAILED ANALYSIS
+# ==========================================
 with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
-    st.subheader("Stress Analysis")
-    st.write(f"- Rail (Strong): {ratio_rail:.1f}%")
-    st.write(f"- Post (Strong): {ratio_post_s:.1f}%")
-    st.write(f"- Post (Weak): {ratio_post_w:.1f}%")
-    
-    st.subheader("Deflection Analysis (L/90)")
-    st.write(f"- Limit: {deflect_limit:.2f} cm")
-    st.write(f"- Actual Strong Axis: {delta_s:.2f} cm {'✅' if delta_s <= deflect_limit else '❌'}")
-    st.write(f"- Actual Weak Axis: {delta_w:.2f} cm {'✅' if delta_w <= deflect_limit else '❌'}")
+    # 7.1 รายงานค่าความเค้น (Stress)
+    st.subheader("📊 Stress Analysis")
+    col_s1, col_s2, col_s3 = st.columns(3)
+    col_s1.write(f"**Rail (Strong)**\n\n{ratio_rail:.1f}%")
+    col_s2.write(f"**Post (Strong)**\n\n{ratio_post_s:.1f}%")
+    col_s3.write(f"**Post (Weak)**\n\n{ratio_post_w:.1f}%")
     
     st.divider()
-    st.write(f"**Distribution Factor (DF):** {df:.2f}")
-    st.write(f"**Kpost:** {k_post:.2f}")
-    st.write(f"**Krail:** {k_rail:.2f}")
-    st.info(f"Post Spacing: {L_cm:.1f} cm")
+
+    # 7.2 รายงานค่าการโก่งตัว (Deflection)
+    st.subheader("📏 Deflection Analysis (L/90)")
+    st.write(f"**Limit:** {deflect_limit:.2f} cm")
+    
+    c_def1, c_def2 = st.columns(2)
+    with c_def1:
+        status_s = "✅ Pass" if delta_s <= deflect_limit else "❌ Fail"
+        st.write(f"**Actual Strong Axis**")
+        st.write(f"{delta_s:.2f} cm ({status_s})")
+    with c_def2:
+        status_w = "✅ Pass" if delta_w <= deflect_limit else "❌ Fail"
+        st.write(f"**Actual Weak Axis**")
+        st.write(f"{delta_w:.2f} cm ({status_w})")
+    
+    st.divider()
+
+    # 7.3 พารามิเตอร์ทางวิศวกรรม (Stiffness & Factors)
+    st.subheader("🧬 Engineering Parameters")
+    c_p1, c_p2, c_p3 = st.columns(3)
+    c_p1.write(f"**DF:** {df:.2f}")
+    c_p2.write(f"**K-Post:** {k_post:.2e}") # ใช้ .2e สำหรับค่าที่อาจจะเยอะมาก
+    c_p3.write(f"**K-Rail:** {k_rail:.2e}")
+    
+    st.info(f"📍 **Post Spacing (L):** {L_cm:.1f} cm")
