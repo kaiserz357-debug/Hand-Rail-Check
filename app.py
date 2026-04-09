@@ -280,4 +280,4 @@ with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
     c_p2.write(f"**K-Post:** {k_post:.2e}") # ใช้ .2e สำหรับค่าที่อาจจะเยอะมาก
     c_p3.write(f"**K-Rail:** {k_rail:.2e}")
     
-    st.info(f"📍 **Post Spacing (L):** {L_cm:.1f} cm")
+
