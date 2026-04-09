@@ -160,18 +160,32 @@ for s in post_locations:
     x_tops.append(px)
     y_tops.append(py + h_post_m)
 
-# --- 6.3.1 เขียนชื่อ Post แค่อันเดียวที่เสาต้นกลาง ---
+# ==========================================
+# 6.3.1 เขียนชื่อ Post (ต้นเดียว, ตรงกลาง, เอียงขนานแนว Rail)
+# ==========================================
 if len(x_tops) > 0:
-    mid_idx = len(x_tops) // 2  # หาเสาต้นกลางจากจำนวนเสาทั้งหมด
+    # 1. หาเสาต้นกลาง
+    mid_idx = len(x_tops) // 2
     px_mid = x_tops[mid_idx]
-    py_mid_base = (post_locations[mid_idx] // 1) * riser_h # หาความสูงพื้นของเสาต้นนั้น
+    
+    # 2. หาความสูงกึ่งกลางเสา (Y-axis)
+    py_mid_base = math.floor(post_locations[mid_idx]) * riser_h
     label_y = py_mid_base + (h_post_m / 2)
     
+    # 3. คำนวณมุมเอียงจากราวจับ (เพื่อให้เอียงขนานกัน)
+    if len(x_tops) >= 2:
+        dx = x_tops[-1] - x_tops[0]
+        dy = y_tops[-1] - y_tops[0]
+        angle_deg = np.degrees(np.arctan2(dy, dx))
+    else:
+        angle_deg = 0 # กรณีมีเสาต้นเดียว ไม่ต้องเอียง
+    
+    # 4. วางข้อความ
     ax.text(px_mid, label_y, f"Post: {post_sel}", 
             color='black', fontsize=8, fontweight='bold',
-            rotation=90, ha='center', va='center',
-            bbox=dict(facecolor='white', alpha=0.6, edgecolor='none'))
-
+            rotation=angle_deg,   # เอียงขนานตามแนว Rail
+            ha='center', va='center',
+            bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=1))
 # ==========================================
 # 6.4 วาดราวจับและเขียนชื่อวัสดุเหนือราว
 # ==========================================
