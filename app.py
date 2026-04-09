@@ -115,9 +115,9 @@ c2.metric("Max Deflection", f"{max(delta_s, delta_w):.2f} cm")
 c3.metric("Limit (L/90)", f"{deflect_limit:.2f} cm")
 
 if max_util > 100 or not deflect_pass:
-    st.error("⚠️ โครงสร้างไม่ผ่านเกณฑ์ (Check Stress หรือ Deflection)")
+    st.error("⚠️ Hand Rail Fail (Check Stress or Deflection)")
 else:
-    st.success("✅ โครงสร้างผ่านเกณฑ์ทั้งความแข็งแรงและการโก่งตัว")
+    st.success("✅ Hand Rail Pass all Stress and Deflection")
 
 # ==========================================
 # 6. DRAWING
