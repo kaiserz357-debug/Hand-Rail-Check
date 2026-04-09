@@ -81,10 +81,32 @@ Fb = 2450.0 * 0.66
 # แก้จาก 120 เป็น 90
 deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้องการ
 
-# 4.1 Stiffness & Load Sharing
-k_post = (3 * E * I_post_s) / (H_cm**3)
+# ==========================================
+# 4.1 Stiffness & Load Sharing (Improved Group Logic)
+# ==========================================
+
+# 1. คำนวณจำนวนเสาต่อ 1 ลูกนอน (Posts per Tread)
+# หากระยะห่างเสา (post_every_n) น้อยกว่า 1 ขั้น แสดงว่ามีเสามากกว่า 1 ต้นในขั้นนั้น
+if post_every_n < 1:
+    posts_per_tread = 1 / post_every_n
+else:
+    posts_per_tread = 1.0  # กรณีห่าง 1 ขั้น หรือมากกว่านั้น
+
+# 2. ปรับ Stiffness ของ Post เป็นแบบกลุ่ม (Combined Stiffness)
+# ยิ่งเสาถี่ Stiffness รวมของกลุ่มเสาในจุดนั้นจะยิ่งสูงขึ้น
+k_single_post = (3 * E * I_post_s) / (H_cm**3)
+k_post_eff = k_single_post * posts_per_tread 
+
+# 3. Stiffness ของ Rail (คำนวณจากระยะห่างจริง L_cm)
 k_rail = (6 * E * I_rail) / (L_cm**3)
-df = k_post/(k_post + (k_rail*2*k_post)/ (2*k_post + k_rail))
+
+# 4. Distribution Factor (df) 
+# ใช้ k_post_eff เพื่อสะท้อนการแชร์แรงระหว่างกลุ่มเสากับราวจับ
+df = k_post_eff / (k_post_eff + (k_rail * 2 * k_post_eff) / (2 * k_post_eff + k_rail))
+
+# 5. แรงกระทำต่อเสา 1 ต้น (Effective Load per Single Post)
+# แรง P ถูกแบ่งเฉลี่ยในกลุ่มเสาก่อน แล้วค่อยคูณด้วย df ของระบบ
+P_eff = (P / posts_per_tread) * df
 
 # 4.2 Post Deflection Calculation (Cantilever Case)
 P_eff = 91.0 * df
