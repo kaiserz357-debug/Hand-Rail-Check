@@ -129,23 +129,44 @@ for i in range(total_stairs):
     ax.plot([i*tread_w, (i+1)*tread_w], [i*riser_h, i*riser_h], color='black', lw=1)
     ax.plot([(i+1)*tread_w, (i+1)*tread_w], [i*riser_h, (i+1)*riser_h], color='black', lw=1)
 
-# 6.2 คำนวณตำแหน่งเสา
-if post_every_n < 1:
-    Step_post = 1
-else:
-    Step_post = post_every_n 
-    
-post_idx = list(range(0, total_stairs, Step_post))
-if (total_stairs-1) not in post_idx: 
-    post_idx.append(total_stairs-1)
+# ==========================================
+# 6.2 คำนวณตำแหน่งเสา (รองรับการปักหลายต้นใน 1 ขั้น)
+# ==========================================
+# สร้างลิสต์เก็บตำแหน่ง 'หน่วยเป็นขั้น' (ทศนิยมได้)
+post_locations = []
+current_pos = 0.5  # เริ่มต้นที่กึ่งกลางลูกนอนของขั้นแรก (0.5)
 
+# วนลูปหาตำแหน่งเสาไปเรื่อยๆ จนกว่าจะสุดจำนวนขั้น
+# เราใช้ความกว้างลูกนอนเป็น 1 หน่วย (1 Step unit)
+total_length_in_steps = float(total_stairs)
+
+while current_pos < total_length_in_steps:
+    post_locations.append(current_pos)
+    current_pos += post_every_n  # บวกระยะห่างเสา (หน่วยเป็นขั้น) เข้าไป
+
+# บังคับให้มีเสาต้นสุดท้ายที่กึ่งกลางลูกนอนของขั้นสุดท้าย (ถ้ายังไม่มี)
+last_step_center = total_stairs - 0.5
+if len(post_locations) > 0 and post_locations[-1] < last_step_center:
+    post_locations.append(last_step_center)
+
+# ==========================================
 # 6.3 วาดเสาและราวจับ
+# ==========================================
 x_tops, y_tops = [], []
-for s in post_idx:
-    px, py = (s * tread_w) + (tread_w/2), s * riser_h
+for s in post_locations:
+    # s คือตำแหน่งในหน่วย 'ขั้น' (เช่น 0.5, 0.9, 1.3...)
+    # คำนวณพิกัด X: s * ความกว้างลูกนอน
+    # คำนวณพิกัด Y: (ตำแหน่ง s ปัดเศษลงเพื่อหาว่าอยู่ขั้นไหน) * ความสูงขั้น
+    px = s * tread_w
+    py = math.floor(s) * riser_h 
+    
     # สีเสาเปลี่ยนตามเงื่อนไข Stress & Deflection
     color = 'green' if (max_util < 100 and deflect_pass) else 'red'
+    
+    # วาดเสา
     ax.plot([px, px], [py, py + h_post_m], color=color, lw=4, zorder=3)
+    
+    # เก็บค่าหัวเสาไว้ลากราวจับ
     x_tops.append(px)
     y_tops.append(py + h_post_m)
 
