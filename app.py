@@ -201,7 +201,7 @@ if len(x_tops) >= 2:
     # เขียนชื่อ Rail เหนือราว (กึ่งกลางเส้น)
     mid_x_rail = (x_tops[0] + x_tops[-1]) / 2
     mid_y_rail = (y_tops[0] + y_tops[-1]) / 2
-    ax.text(mid_x_rail, mid_y_rail + 0.02, f"Rail: {rail_sel}", 
+    ax.text(mid_x_rail, mid_y_rail + 0.01, f"Rail: {rail_sel}", 
             color='royalblue', fontsize=9, fontweight='bold',
             rotation=angle_deg, ha='center', va='bottom')
 
