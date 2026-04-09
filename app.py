@@ -145,51 +145,55 @@ last_step_center = total_stairs - 0.5
 if len(post_locations) > 0 and post_locations[-1] < last_step_center:
     post_locations.append(last_step_center)
 
-# 6.3 วาดเสาและเขียนชื่อวัสดุทับกึ่งกลางเสา
+# ==========================================
+# 6.3 วาดเสา
+# ==========================================
 x_tops, y_tops = [], []
 for s in post_locations:
-    # คำนวณพิกัด (s คือหน่วยขั้นบันได)
     px = s * tread_w
     py = math.floor(s) * riser_h 
-    
-    # สีเสาตามผลการเช็ค
     color = 'green' if (max_util < 100 and deflect_pass) else 'red'
     
-    # วาดเสา
+    # วาดเสาตามปกติ
     ax.plot([px, px], [py, py + h_post_m], color=color, lw=4, zorder=3)
     
-    # เขียนชื่อ Material Post แบบเอียง 90 องศา ทับกึ่งกลางเสา
-    label_post_y = py + (h_post_m / 2)
-    ax.text(px, label_post_y, f"{post_sel}", 
-            color='black', fontsize=7, fontweight='bold',
-            rotation=90, ha='center', va='center',
-            bbox=dict(facecolor='white', alpha=0.4, edgecolor='none'))
-
     x_tops.append(px)
     y_tops.append(py + h_post_m)
 
+# --- 6.3.1 เขียนชื่อ Post แค่อันเดียวที่เสาต้นกลาง ---
+if len(x_tops) > 0:
+    mid_idx = len(x_tops) // 2  # หาเสาต้นกลางจากจำนวนเสาทั้งหมด
+    px_mid = x_tops[mid_idx]
+    py_mid_base = (post_locations[mid_idx] // 1) * riser_h # หาความสูงพื้นของเสาต้นนั้น
+    label_y = py_mid_base + (h_post_m / 2)
+    
+    ax.text(px_mid, label_y, f"Post: {post_sel}", 
+            color='black', fontsize=8, fontweight='bold',
+            rotation=90, ha='center', va='center',
+            bbox=dict(facecolor='white', alpha=0.6, edgecolor='none'))
+
+# ==========================================
 # 6.4 วาดราวจับและเขียนชื่อวัสดุเหนือราว
+# ==========================================
 if len(x_tops) >= 2:
-    # วาดราวจับเส้นตรงจากต้นแรกไปต้นสุดท้าย
     ax.plot([x_tops[0], x_tops[-1]], [y_tops[0], y_tops[-1]], 
             color='royalblue', lw=5, zorder=4)
     
-    # คำนวณมุมเอียงของราวจับเพื่อหมุนตัวอักษรให้ขนาน
+    # มุมเอียงราวจับ
     dx = x_tops[-1] - x_tops[0]
     dy = y_tops[-1] - y_tops[0]
     angle_deg = np.degrees(np.arctan2(dy, dx))
     
-    # เขียนชื่อ Material Rail เอียงขนานเหนือราวจับ (ตำแหน่งกึ่งกลางเส้น)
-    mid_x = (x_tops[0] + x_tops[-1]) / 2
-    mid_y = (y_tops[0] + y_tops[-1]) / 2
-    ax.text(mid_x, mid_y + 0.05, f"Rail: {rail_sel}", 
+    # เขียนชื่อ Rail เหนือราว (กึ่งกลางเส้น)
+    mid_x_rail = (x_tops[0] + x_tops[-1]) / 2
+    mid_y_rail = (y_tops[0] + y_tops[-1]) / 2
+    ax.text(mid_x_rail, mid_y_rail + 0.05, f"Rail: {rail_sel}", 
             color='royalblue', fontsize=9, fontweight='bold',
             rotation=angle_deg, ha='center', va='bottom')
 
 ax.set_aspect('equal')
 ax.set_title("Handrail Structural Analysis View")
-ax.set_xlabel("Distance (m)")
-ax.set_ylabel("Height (m)")
+st.pyplot(fig)
 
 st.pyplot(fig)
 # ==========================================
