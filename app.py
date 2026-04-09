@@ -47,8 +47,8 @@ with st.sidebar:
     post_every_n = post_pitch[post_pitch_label] # แก้ชื่อตัวแปรให้ตรงกัน
 
     st.subheader("Materials")
-    rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=0)
-    post_sel = st.selectbox("Select Post", list(materials.keys()), index=2)
+    rail_sel = st.selectbox("Select Rail", list(materials.keys()), index=9)
+    post_sel = st.selectbox("Select Post", list(materials.keys()), index=11)
 
 # --- ส่วนที่เหลือ (Calculations & Plot) ใช้ตามเดิมได้เลยครับ ---
 
