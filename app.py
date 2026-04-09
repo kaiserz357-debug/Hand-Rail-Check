@@ -170,22 +170,23 @@ for s in post_locations:
     x_tops.append(px)
     y_tops.append(py + h_post_m)
 
+# ==========================================
 # 6.4 ปรับแต่งภาพและแสดงผล
-# ลากเส้นเชื่อมเฉพาะจุดแรก (Index 0) และจุดสุดท้าย (Index -1)
+# ==========================================
+
+# 1. ลากเส้นราวจับเชื่อมเฉพาะจุดแรกและจุดสุดท้าย (ไม่มี Marker วงกลมแล้ว)
 if len(x_tops) >= 2:
     ax.plot([x_tops[0], x_tops[-1]], [y_tops[0], y_tops[-1]], 
             color='royalblue', lw=5, zorder=4, label='Top Rail')
 
-# วาดจุด Marker (หัวเสา) ไว้เหมือนเดิมเพื่อให้เห็นตำแหน่งยึด
-ax.scatter(x_tops, y_tops, color='royalblue', s=50, zorder=5) 
+# --- บรรทัด ax.scatter เดิมถูกเอาออกแล้วเพื่อให้ภาพดู Clean ขึ้น ---
 
 ax.set_aspect('equal')
-ax.set_title("Handrail Side View Analysis (First to Last Post)")
+ax.set_title("Handrail Side View Analysis (Clean View)")
 ax.set_xlabel("Distance (m)")
 ax.set_ylabel("Height (m)")
 
 st.pyplot(fig)
-
 # ==========================================
 # 7. DETAILED ANALYSIS
 # ==========================================
