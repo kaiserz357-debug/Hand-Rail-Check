@@ -104,7 +104,7 @@ deflect_pass = (delta_s <= deflect_limit) and (delta_w <= deflect_limit)
 # ==========================================
 # 5. MAIN UI
 # ==========================================
-st.title("Hand Rail Check ver 01 by Ardharn 2026")
+st.title("Hand Rail Check by Ardharn 2026")
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Max Stress", f"{max_util:.1f}%")
@@ -116,30 +116,43 @@ if max_util > 100 or not deflect_pass:
 else:
     st.success("✅ โครงสร้างผ่านเกณฑ์ทั้งความแข็งแรงและการโก่งตัว")
 
-# --- Drawing (Same as before) ---
+# ==========================================
+# 6. DRAWING
+# ==========================================
 fig, ax = plt.subplots(figsize=(10, 5))
+
+# 6.1 วาดโครงขั้นบันได
 for i in range(total_stairs):
     ax.plot([i*tread_w, (i+1)*tread_w], [i*riser_h, i*riser_h], color='black', lw=1)
     ax.plot([(i+1)*tread_w, (i+1)*tread_w], [i*riser_h, (i+1)*riser_h], color='black', lw=1)
 
+# 6.2 คำนวณตำแหน่งเสา
 if post_every_n < 1:
     Step_post = 1
 else:
-    Step_post = post_every_n  # ถ้าค่าปกติ ก็ใช้ค่านั้นเลย
+    Step_post = post_every_n 
     
 post_idx = list(range(0, total_stairs, Step_post))
-if (total_stairs-1) not in post_idx: post_idx.append(total_stairs-1)
+if (total_stairs-1) not in post_idx: 
+    post_idx.append(total_stairs-1)
 
+# 6.3 วาดเสาและราวจับ
 x_tops, y_tops = [], []
 for s in post_idx:
     px, py = (s * tread_w) + (tread_w/2), s * riser_h
     # สีเสาเปลี่ยนตามเงื่อนไข Stress & Deflection
     color = 'green' if (max_util < 100 and deflect_pass) else 'red'
     ax.plot([px, px], [py, py + h_post_m], color=color, lw=4, zorder=3)
-    x_tops.append(px); y_tops.append(py + h_post_m)
+    x_tops.append(px)
+    y_tops.append(py + h_post_m)
 
+# 6.4 ปรับแต่งภาพและแสดงผล
 ax.plot(x_tops, y_tops, color='royalblue', lw=5, marker='o', zorder=4)
 ax.set_aspect('equal')
+ax.set_title("Handrail Side View Analysis")
+ax.set_xlabel("Distance (m)")
+ax.set_ylabel("Height (m)")
+
 st.pyplot(fig)
 
 # Detailed Analysis
