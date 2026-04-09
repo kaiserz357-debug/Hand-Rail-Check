@@ -209,7 +209,7 @@ ax.set_aspect('equal')
 ax.set_title("Handrail Structural Analysis View")
 st.pyplot(fig)
 
-st.pyplot(fig)
+
 # ==========================================
 # 7. DETAILED ANALYSIS
 # ==========================================
