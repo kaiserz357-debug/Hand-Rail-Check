@@ -277,7 +277,12 @@ with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
     st.subheader("🧬 Engineering Parameters")
     c_p1, c_p2, c_p3 = st.columns(3)
     c_p1.write(f"**DF:** {df:.2f}")
-    c_p2.write(f"**K-Post:** {k_post:.2e}") # ใช้ .2e สำหรับค่าที่อาจจะเยอะมาก
+# --- ส่วนการแสดงผลค่า Stiffness ---
+if post_every_n < 1:
+    c_p2.write("**K-Post:** N/A")
+    c_p3.write("**K-Rail:** N/A")
+else:
+    c_p2.write(f"**K-Post:** {k_post:.2e}")
     c_p3.write(f"**K-Rail:** {k_rail:.2e}")
     
 
