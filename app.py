@@ -110,7 +110,7 @@ Fb = 2450.0 * 0.66
 deflect_limit = H_cm / 90  # L/90 Limit ตามเกณฑ์ที่ต้องการ
 
 # 1. เช็ค Shortcut สำหรับเคส @50 MM.
-if post_pitch == "@50 MM.":
+if post_every_n < 1:
     df = 0.2
 else:
     # 2. คำนวณตามทฤษฎีปกติสำหรับเคสอื่นๆ
