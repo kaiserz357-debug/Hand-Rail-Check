@@ -5,6 +5,7 @@ import math
 # 1. Setup
 # ==========================================
 st.set_page_config(page_title="Hand Rail Check by Ardharn ver01 2026", layout="centered")
+st.caption("Reference Code ASCE7-05, AISC ASD")
 # ==========================================
 # 2. MATERIAL DATABASE (เพิ่มคอมม่าที่บรรทัด Square Tube 50x2.3)
 # ==========================================
