@@ -1,16 +1,3 @@
-import subprocess
-import sys
-
-# ฟังก์ชันตรวจสอบและติดตั้งไลบรารีอัตโนมัติเผื่อกรณีลืมใส่ใน requirements.txt
-def install_and_import(package):
-    try:
-        __import__(package)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-install_and_import("streamlit")
-install_and_import("plotly")
-
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
@@ -122,12 +109,10 @@ col3.metric("Status", "SAFE" if is_pass else "UNSAFE")
 st.subheader("📊 ภาพจำลองรูปด้านโครงสร้าง (Side Elevation Preview)")
 fig = go.Figure()
 
-# วาดขั้นบันได
 stair_x = [i * tread_w for i in range(total_stairs + 1)]
 stair_y = [i * riser_h for i in range(total_stairs + 1)]
 fig.add_trace(go.Scatter(x=stair_x, y=stair_y, mode='lines', line=dict(color='#334155', width=3), name='Stairs', line_shape='hv'))
 
-# วาดเสาและราว
 post_locs = [i + 0.5 for i in range(0, total_stairs, post_every_n)]
 for s in post_locs:
     if s < total_stairs:
