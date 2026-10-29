@@ -8,11 +8,14 @@ import numpy as np
 # ==========================================
 st.set_page_config(page_title="Hand Rail Check by Ardharn ver01 2026", layout="centered")
 
-# CSS สำหรับซ่อนส่วนควบคุมเมื่อกดพิมพ์รายงาน (Print Styling)
+# CSS สำหรับจัดหน้าตอนกด Print (ซ่อน Sidebar และส่วนที่ไม่จำเป็น)
 st.markdown("""
     <style>
     @media print {
-        .no-print {
+        .stSidebar {
+            display: none !important;
+        }
+        header {
             display: none !important;
         }
         body {
@@ -238,45 +241,6 @@ with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
         c_p2.write(f"**K-Post:** {k_post:.2e}")
         c_p3.write(f"**K-Rail:** {k_rail:.2e}")
 
-# ==========================================
-# 8. PRINT REPORT SECTION (HTML Button)
-# ==========================================
+# คำแนะนำสำหรับการพิมพ์รายงาน
 st.markdown("---")
-st.markdown("### 🖨️ พิมพ์หรือบันทึกรายงานคำนวณ (Print Report)")
-
-# สร้างปุ่มสั่งพิมพ์ด้วย HTML/JS ที่ทำงานบนเบราว์เซอร์ของผู้ใช้โดยตรง
-print_html = """
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-.print-btn {
-    background-color: #2563eb;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    font-weight: 600;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    width: 100%;
-    font-family: 'Source Sans Pro', sans-serif;
-}
-.print-btn:hover {
-    background-color: #1d4ed8;
-}
-</style>
-</head>
-<body>
-<button class="print-btn" onclick="window.print()">📄 คลิกเพื่อพิมพ์รายงาน / Save as PDF</button>
-</body>
-</html>
-"""
-
-# แสดงปุ่มผ่าน streamlit components
-import streamlit.components.v1 as components
-components.html(print_html, height=60)
+st.info("💡 **คำแนะนำการพิมพ์รายงาน:** หากต้องการบันทึกเป็น PDF หรือพิมพ์รายงาน ให้กดคีย์ลัด **Ctrl + P** (สำหรับ Windows) หรือ **Cmd + P** (สำหรับ Mac) บนแป้นพิมพ์ของคุณได้ทันที ระบบจะจัดหน้ากระดาษให้พร้อมใช้งานโดยอัตโนมัติ")
