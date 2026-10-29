@@ -239,19 +239,44 @@ with st.expander("🔍 See Detailed Stress & Deflection Analysis"):
         c_p3.write(f"**K-Rail:** {k_rail:.2e}")
 
 # ==========================================
-# 8. PRINT REPORT SECTION (PDF / Print Preview)
+# 8. PRINT REPORT SECTION (HTML Button)
 # ==========================================
 st.markdown("---")
-col_print1, col_print2 = st.columns([3, 1])
-with col_print1:
-    st.markdown("### 🖨️ พิมพ์หรือบันทึกรายงานคำนวณ (Print Report)")
-    st.markdown("คลิกปุ่มด้านขวาเพื่อเปิดหน้าต่างพิมพ์รายงาน (คุณสามารถเลือก **Save as PDF** ได้ในหน้าต่าง Print ของ browser)")
-with col_print2:
-    st.markdown("<br>", unsafe_allow_html=True)
-    # ใช้ JavaScript พิมพ์หน้าจอผ่านปุ่ม Streamlit
-    if st.button("📄 Print / Save PDF", use_container_width=True):
-        st.markdown("""
-            <script>
-                window.print();
-            </script>
-        """, unsafe_allow_html=True)
+st.markdown("### 🖨️ พิมพ์หรือบันทึกรายงานคำนวณ (Print Report)")
+
+# สร้างปุ่มสั่งพิมพ์ด้วย HTML/JS ที่ทำงานบนเบราว์เซอร์ของผู้ใช้โดยตรง
+print_html = """
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.print-btn {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.print-btn:hover {
+    background-color: #1d4ed8;
+}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">📄 คลิกเพื่อพิมพ์รายงาน / Save as PDF</button>
+</body>
+</html>
+"""
+
+# แสดงปุ่มผ่าน streamlit components
+import streamlit.components.v1 as components
+components.html(print_html, height=60)
